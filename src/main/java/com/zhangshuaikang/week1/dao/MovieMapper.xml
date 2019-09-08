@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhangshuaikang.week1.dao.MovieMapper">
+
+	<select id="selects" resultType="map">
+		select a.*,GROUP_CONCAT(sname)snames from movie a LEFT JOIN ms b on a.mid = b.mid 
+		left join movies c on b.sid=c.sid 
+		<where>
+			<if test="mname!=null and mname!=''">
+				 and a.mname like '%${mname}%'
+			</if>
+		</where>
+		GROUP BY a.mid
+	</select>
+
+	<select id="getMovies" resultType="map">
+		select * from movies
+	</select>
+	
+	<insert id="add">
+		<selectKey order="AFTER" keyProperty="mid" resultType="int">
+			select LAST_INSERT_MID()
+		</selectKey>
+		insert into movie set mname=#{mname},miao=#{miao},voter=#{voter},datea=#{datea}
+	</insert>
+	
+	<insert id="addms">
+		insert into movies mid=${mid},sid=${sid}
+	</insert>
+	
+	<delete id="del">
+		delete * from movie where mid=#{id}
+	</delete>
+</mapper>
